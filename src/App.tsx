@@ -45,7 +45,7 @@ export default function App() {
 
   // Hero section Video Player States
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const [videoMuted, setVideoMuted] = useState(true);
+  const [videoMuted, setVideoMuted] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
   const [videoCurrentTime, setVideoCurrentTime] = useState(0);
   const [videoDuration, setVideoDuration] = useState(23); // 23 seconds based on user request
@@ -69,11 +69,18 @@ export default function App() {
 
   // Video interaction functions
   const toggleVideoPlay = () => {
+    if (videoError) {
+      setVideoPlaying(!videoPlaying);
+      return;
+    }
     if (videoRef.current) {
       if (videoPlaying) {
         videoRef.current.pause();
         setVideoPlaying(false);
       } else {
+        // Explicitly unmute video on play trigger to address missing audio issues
+        videoRef.current.muted = false;
+        setVideoMuted(false);
         videoRef.current.play()
           .then(() => setVideoPlaying(true))
           .catch((err) => {
@@ -97,6 +104,12 @@ export default function App() {
   };
 
   const restartVideo = () => {
+    if (videoError) {
+      setVideoCurrentTime(0);
+      setVideoProgress(0);
+      setVideoPlaying(true);
+      return;
+    }
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().then(() => setVideoPlaying(true));
@@ -218,7 +231,16 @@ export default function App() {
       {/* HEADER / NAVIGATION */}
       <nav id="nav-header" className="relative z-50 bg-brand-navy border-b border-white/10 px-6 py-4 md:px-12 flex justify-between items-center">
         <a href="#hero" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-lavender flex items-center justify-center text-white font-black text-xl shadow-lg shadow-brand-orange/15">E</div>
+          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-lavender flex items-center justify-center shadow-lg shadow-brand-orange/15 outline outline-1 outline-white/10">
+            {/* High-fidelity Vector Soundwave Voice Logo representing EchoVoice Labs */}
+            <svg className="w-5.5 h-5.5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="10" width="2" height="4" rx="1" fill="currentColor" className="opacity-40" />
+              <rect x="7" y="6" width="2" height="12" rx="1" fill="currentColor" className="opacity-75" />
+              <rect x="11" y="3" width="2" height="18" rx="1" fill="currentColor" />
+              <rect x="15" y="5" width="2" height="14" rx="1" fill="currentColor" className="opacity-90" />
+              <rect x="19" y="9" width="2" height="6" rx="1" fill="currentColor" className="opacity-50" />
+            </svg>
+          </div>
           <div className="flex flex-col">
             <span className="font-display font-black text-sm text-white tracking-widest uppercase">EchoVoice</span>
             <span className="text-[10px] text-brand-lightblue tracking-widest font-mono uppercase">Labs</span>
@@ -287,96 +309,87 @@ export default function App() {
         <div className="md:col-span-1 w-full flex justify-center">
           <div className="relative aspect-[9/16] w-full max-w-[320px] md:max-w-[350px] rounded-3xl overflow-hidden bg-brand-navy shadow-2xl border border-brand-navy/10 hover:border-brand-orange/30 transition-all duration-300 group flex flex-col justify-between">
             
-            {/* The Video Element */}
-            <video
-              ref={videoRef}
-              src="claire_video.mp4"
-              poster={claireThumbnail}
-              playsInline
-              loop
-              muted={videoMuted}
-              onTimeUpdate={() => {
-                if (videoRef.current) {
-                  setVideoCurrentTime(videoRef.current.currentTime);
-                  setVideoProgress((videoRef.current.currentTime / (videoRef.current.duration || 23)) * 100);
-                }
-              }}
-              onLoadedMetadata={() => {
-                if (videoRef.current) {
-                  setVideoDuration(videoRef.current.duration || 23);
-                }
-              }}
-              onEnded={() => {
-                setVideoPlaying(false);
-                setVideoProgress(0);
-                setVideoCurrentTime(0);
-              }}
-              onError={() => {
-                setVideoError(true);
-              }}
+            {/* Always display Claire's thumbnail as the ultimate back canvas (even when loading or fallback is active) */}
+            <img 
+              src={claireThumbnail} 
+              alt="Claire Representative Video Presentation Poster" 
               className="absolute inset-0 w-full h-full object-cover z-0"
-              style={{ display: videoError ? 'none' : 'block' }}
+              referrerPolicy="no-referrer"
             />
 
-            {/* Fallback Holographic Interactive Interface when videoError is true or video file isn't loaded yet */}
-            {videoError && (
-              <div className="absolute inset-0 z-0 bg-brand-navy flex flex-col items-center justify-center p-6 text-center overflow-hidden">
-                {/* Background Claire Thumbnail overlay for fallback realism */}
-                <div className="absolute inset-0 z-0">
-                  <img src={claireThumbnail} alt="Claire AI Representative" className="w-full h-full object-cover opacity-25" referrerPolicy="no-referrer" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/60 to-brand-navy/20" />
+            {/* The Video Element (Only rendered if no error, but hidden if an error is detected to allow simulation play fallback) */}
+            {!videoError && (
+              <video
+                ref={videoRef}
+                src="claire_video.mp4"
+                poster={claireThumbnail}
+                playsInline
+                loop
+                muted={videoMuted}
+                onTimeUpdate={() => {
+                  if (videoRef.current) {
+                    setVideoCurrentTime(videoRef.current.currentTime);
+                    setVideoProgress((videoRef.current.currentTime / (videoRef.current.duration || 23)) * 100);
+                  }
+                }}
+                onLoadedMetadata={() => {
+                  if (videoRef.current) {
+                    setVideoDuration(videoRef.current.duration || 23);
+                  }
+                }}
+                onEnded={() => {
+                  setVideoPlaying(false);
+                  setVideoProgress(0);
+                  setVideoCurrentTime(0);
+                }}
+                onError={() => {
+                  setVideoError(true);
+                }}
+                className="absolute inset-0 w-full h-full object-cover z-0"
+                style={{ display: videoPlaying ? 'block' : 'none' }}
+              />
+            )}
+
+            {/* Dynamic AI Voice Wave Visualizer Overlay (shown overlaying Claire's image during simulated or regular play) */}
+            {videoPlaying && (
+              <div className="absolute inset-0 bg-black/45 backdrop-blur-[0.5px] flex flex-col justify-end pb-24 z-10 shadow-inner pointer-events-none transition-all duration-300">
+                {/* Visualizer glowing pulse ripple circles */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-80 overflow-hidden">
+                  <div className="w-[180px] h-[180px] rounded-full border-2 border-brand-orange/20 animate-ping absolute opacity-30" />
+                  <div className="w-[120px] h-[120px] rounded-full border border-brand-lavender/30 animate-pulse absolute opacity-45" />
+                  <div className="w-[70px] h-[70px] rounded-full bg-brand-orange/10 animate-pulse absolute opacity-20" />
                 </div>
-                <div className="absolute inset-0 bg-[radial-gradient(#ffffff0b_1px,transparent_1px)] [background-size:16px_16px]" />
-                {/* Rotating scanner grid rings */}
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-transparent to-brand-navy/80" />
                 
-                {/* Visual Speaking Robot Avatar Simulation (Matches "Claire" design) */}
-                <div className="relative z-10 w-32 h-32 rounded-full border border-brand-orange/30 p-2 flex items-center justify-center bg-brand-navy/50 backdrop-blur-md">
-                  {/* Outer pulse boundary ring */}
-                  <div className={`absolute inset-0 rounded-full border border-brand-orange/20 transition-all duration-1000 ${videoPlaying ? 'animate-ping scale-105 opacity-40' : 'opacity-0'}`} />
-                  <div className={`absolute inset-2 rounded-full bg-brand-orange/10 transition-all duration-700 ${videoPlaying ? 'scale-110 opacity-30' : 'scale-100 opacity-10'}`} />
-                  
-                  {/* Inside core avatar circle */}
-                  <div className="w-full h-full rounded-full bg-brand-navy/90 flex flex-col items-center justify-center overflow-hidden border border-brand-orange/20 relative">
-                    <span className="text-3xl font-display font-black tracking-tighter text-brand-orange animate-pulse">AI</span>
-                    {/* Tiny blinking active signal dot (Changed green to bright blue as requested) */}
-                    <span className="absolute top-3 right-8 w-2 h-2 rounded-full bg-[#7C8BC4] animate-pulse shadow-sm" />
-                  </div>
+                {/* Animated vocal frequency bands representation */}
+                <div className="relative z-10 w-full flex justify-center items-end gap-1.5 h-16 px-6">
+                  <div className="w-1 bg-brand-orange rounded-full origin-bottom animate-wave-1 h-8 opacity-75" />
+                  <div className="w-1 bg-white rounded-full origin-bottom animate-wave-4 h-12 opacity-95" />
+                  <div className="w-1 bg-brand-lavender rounded-full origin-bottom animate-wave-2 h-6 opacity-85" />
+                  <div className="w-1 bg-brand-orange rounded-full origin-bottom animate-wave-5 h-10 opacity-90" />
+                  <div className="w-1 bg-white rounded-full origin-bottom animate-wave-3 h-14 opacity-100" />
+                  <div className="w-1 bg-brand-lavender rounded-full origin-bottom animate-wave-2 h-7 opacity-85" />
+                  <div className="w-1 bg-brand-orange rounded-full origin-bottom animate-wave-4 h-11 opacity-80" />
+                  <div className="w-1 bg-white rounded-full origin-bottom animate-wave-1 h-5 opacity-90" />
+                  <div className="w-1 bg-brand-lavender rounded-full origin-bottom animate-wave-3 h-9 opacity-75" />
                 </div>
-
-                <div className="relative z-10 mt-6 space-y-1">
-                  <h4 className="text-white text-base font-display font-bold">Claire (Virtual Agent)</h4>
-                  <p className="text-[10px] font-mono tracking-widest text-brand-lavender uppercase">Echo Voice Labs Rep</p>
-                </div>
-
-                {/* Simulated dynamic wave animation */}
-                <div className="relative z-10 h-10 flex gap-1 justify-center items-center mt-8 w-44">
-                  {[...Array(12)].map((_, i) => {
-                    const randomHeight = videoPlaying ? Math.floor(Math.random() * 24) + 6 : 4;
-                    return (
-                      <div 
-                        key={i}
-                        className="w-1 bg-brand-lavender rounded-full transition-all duration-300"
-                        style={{ height: `${randomHeight}px`, opacity: videoPlaying ? 0.9 : 0.3 }}
-                      />
-                    );
-                  })}
+                <div className="text-center text-[9px] font-mono tracking-widest text-brand-orange uppercase opacity-85 mt-2">
+                  Voice Stream Active
                 </div>
               </div>
             )}
 
-            {/* HEADER OVERLAY: Title and Pill Tags */}
-            <div className="relative z-10 p-4 bg-gradient-to-b from-brand-navy/95 via-brand-navy/40 to-transparent flex justify-between items-start pointer-events-none">
+            {/* HEADER OVERLAY: Title and Pill Tags (Softened transparent black overlays let video shine clearly) */}
+            <div className="relative z-10 p-4 bg-gradient-to-b from-black/75 via-black/15 to-transparent flex justify-between items-start pointer-events-none">
               <div className="space-y-0.5">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-burnt/30 backdrop-blur-md border border-brand-orange/20 text-white text-[9px] font-mono uppercase tracking-wider font-bold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-burnt/35 backdrop-blur-md border border-brand-orange/20 text-white text-[9px] font-mono uppercase tracking-wider font-bold">
                   {/* Changed green to bright blue as requested */}
                   <span className={`w-1.5 h-1.5 rounded-full bg-[#7C8BC4] ${videoPlaying ? 'animate-pulse' : ''}`} />
                   <span>Interactive Pitch</span>
                 </span>
-                <p className="text-[10px] text-white/55 font-mono ml-0.5">Claire (AI Rep)</p>
+                <p className="text-[10px] text-white/70 font-mono ml-0.5">Claire (AI Rep)</p>
               </div>
 
-              <span className="px-2 py-0.5 rounded bg-black/40 text-white/80 font-mono text-[9px] backdrop-blur-md border border-white/5">
+              <span className="px-2 py-0.5 rounded bg-black/50 text-white/90 font-mono text-[9px] backdrop-blur-md border border-white/5">
                 0:23
               </span>
             </div>
@@ -387,7 +400,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={toggleVideoPlay}
-                  className="pointer-events-auto w-16 h-16 rounded-full bg-white/10 hover:bg-brand-lavender text-white backdrop-blur-lg border border-white/20 hover:border-brand-lavender flex items-center justify-center transition-all duration-300 transform scale-100 hover:scale-110 active:scale-95 shadow-2xl hover:shadow-brand-orange/25"
+                  className="pointer-events-auto w-16 h-16 rounded-full bg-white/20 hover:bg-brand-lavender text-white backdrop-blur-lg border border-white/30 hover:border-brand-lavender flex items-center justify-center transition-all duration-300 transform scale-100 hover:scale-110 active:scale-95 shadow-2xl hover:shadow-brand-orange/25"
                   aria-label="Play introduction video"
                 >
                   <Play size={28} className="fill-current text-white ml-1" />
@@ -395,12 +408,12 @@ export default function App() {
               )}
             </div>
 
-            {/* BOTTOM CONTROLS & SUBTITLE CONTAINER */}
-            <div className="relative z-10 p-4 bg-gradient-to-t from-brand-navy/95 via-brand-navy/80 to-transparent space-y-3">
+            {/* BOTTOM CONTROLS & SUBTITLE CONTAINER (Softened transparent black offsets let video shine clearly) */}
+            <div className="relative z-10 p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent space-y-3">
               
               {/* Synchronized Subtitle Area (gorgeous translucent ribbon) */}
               {videoPlaying && (
-                <div className="px-3 py-2 rounded-xl bg-black/60 backdrop-blur-sm border border-white/10 text-center min-h-[50px] flex items-center justify-center">
+                <div className="px-3 py-2 rounded-xl bg-black/75 backdrop-blur-md border border-white/10 text-center min-h-[50px] flex items-center justify-center">
                   <p className="text-white text-[11px] leading-relaxed font-light tracking-wide italic">
                     "{getActiveSubtitle()}"
                   </p>
@@ -1289,7 +1302,7 @@ export default function App() {
                   {socialAddon && (
                     <div className="flex justify-between items-center text-[11px] font-mono text-brand-burnt bg-brand-orange/5 p-2 rounded border border-brand-orange/10">
                       <span>Add-on Total:</span>
-                      <span>+$99.00</span>
+                      <span>+$97.00</span>
                     </div>
                   )}
 
@@ -1297,7 +1310,7 @@ export default function App() {
                   <div className="pt-3 border-t border-brand-navy/10 flex justify-between items-baseline font-black text-sm text-brand-navy">
                     <span>Initial Amount Due:</span>
                     <span className="font-mono text-brand-burnt">
-                      ${(selectedPlan === 'managed' ? 499 : 699) + (socialAddon ? 99 : 0)}
+                      ${(selectedPlan === 'managed' ? 499 : 699) + (socialAddon ? 97 : 0)}
                     </span>
                   </div>
                 </div>
@@ -1590,12 +1603,12 @@ export default function App() {
         <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-brand-navy/10 p-6 md:p-10 shadow-xl shadow-brand-navy/5 flex flex-col md:flex-row gap-8 items-center">
           <div className="space-y-4 flex-1">
             <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase block">While We're At It</span>
-            <h3 className="font-display font-black text-2xl text-brand-navy">Add a Month of Social Content for $99</h3>
+            <h3 className="font-display font-black text-2xl text-brand-navy">Add a Month of Social Content for $97</h3>
             <p className="text-xs md:text-sm text-brand-navy/70 leading-relaxed font-light">
               We'll design 12-15 branded static social media posts — ready to publish on Instagram, Facebook, and Google Business Profile. Consistent, on-brand, and done for you.
             </p>
             <div className="text-xs space-y-1 block font-mono text-brand-lavender font-bold">
-              <div>• $99 one-time payment</div>
+              <div>• $97 one-time payment</div>
               <div>• $79/month when added to any Managed Plan</div>
             </div>
           </div>
@@ -1652,8 +1665,17 @@ export default function App() {
       {/* FOOTER */}
       <footer id="footer" className="bg-brand-navy text-white/50 border-t border-white/5 px-6 py-12 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-center md:text-left">
         <div className="space-y-2">
-          <div className="flex items-center justify-center md:justify-start gap-2 text-white">
-            <div className="w-6 h-6 rounded bg-brand-orange flex items-center justify-center text-xs font-black">E</div>
+          <div className="flex items-center justify-center md:justify-start gap-2.5 text-white">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-brand-orange to-brand-lavender flex items-center justify-center shadow-sm border border-white/10">
+              {/* Matching Soundwave brand mark for EchoVoice Labs inside footer */}
+              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="10" width="2" height="4" rx="0.5" fill="currentColor" className="opacity-50" />
+                <rect x="8" y="6" width="2" height="12" rx="0.5" fill="currentColor" className="opacity-80" />
+                <rect x="12" y="3" width="2" height="18" rx="0.5" fill="currentColor" />
+                <rect x="16" y="5" width="2" height="14" rx="0.5" fill="currentColor" className="opacity-90" />
+                <rect x="20" y="8" width="2" height="8" rx="0.5" fill="currentColor" className="opacity-60" />
+              </svg>
+            </div>
             <span className="font-display font-bold text-sm uppercase tracking-widest">ECHOVOICE LABS</span>
           </div>
           <p className="font-mono text-[10px]">A Rhombus Corp Company</p>

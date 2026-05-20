@@ -10,6 +10,20 @@
   --color-brand-lightblue: #98a1b0;
   --color-brand-lightgray: #e3e3e3;
   --animate-kenburns: kenburns 30s ease-in-out infinite alternate;
+  --animate-wave-1: wave-pulse 1.2s ease-in-out infinite alternate;
+  --animate-wave-2: wave-pulse 0.7s ease-in-out infinite alternate;
+  --animate-wave-3: wave-pulse 1.0s ease-in-out infinite alternate;
+  --animate-wave-4: wave-pulse 0.6s ease-in-out infinite alternate;
+  --animate-wave-5: wave-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes wave-pulse {
+  0% {
+    transform: scaleY(0.2);
+  }
+  100% {
+    transform: scaleY(1.1);
+  }
 }
 
 @keyframes kenburns {

@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Poppins', sans-serif;
+  --font-display: 'Montserrat', sans-serif;
+  --color-brand-orange: #e8853d;
+  --color-brand-burnt: #c8591a;
+  --color-brand-navy: #0d0d1b;
+  --color-brand-lavender: #7d8cc6;
+  --color-brand-lightblue: #98a1b0;
+  --color-brand-lightgray: #e3e3e3;
+  --animate-kenburns: kenburns 30s ease-in-out infinite alternate;
+}
+
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.1) translate(-2%, -1%);
+  }
+  100% {
+    transform: scale(1.05) translate(1%, 1%);
+  }
+}
+
+@layer base {
+  body {
+    background-color: #e3e3e3;
+    color: #0d0d1b;
+    font-family: 'Poppins', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+  }
+}

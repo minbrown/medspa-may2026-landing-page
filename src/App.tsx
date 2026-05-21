@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import auraMedspaDemo from './assets/images/aura_medspa_demo_1779310747950.png';
 import dermabrasionBefore from './assets/images/dermabrasion_before_1779321010455.png';
 import dermabrasionAfter from './assets/images/dermabrasion_after_1779321030371.png';
-import instagramAesthetic from './assets/images/instagram_aesthetic_1779322358897.png';
+import instagramAesthetic from './assets/images/instagram_aesthetic.png';
+import echoVoiceLabsLogoSteel from './assets/images/echo_voice_labs-logo_steel.png';
 import { 
   Sparkles, 
   Check, 
@@ -233,21 +234,16 @@ export default function App() {
 
       {/* HEADER / NAVIGATION */}
       <nav id="nav-header" className="relative z-50 bg-brand-navy border-b border-white/10 px-6 py-4 md:px-12 flex justify-between items-center">
-        <a href="#hero" className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-lavender flex items-center justify-center shadow-lg shadow-brand-orange/15 outline outline-1 outline-white/10">
-            {/* High-fidelity Vector Soundwave Voice Logo representing EchoVoice Labs */}
-            <svg className="w-5.5 h-5.5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="10" width="2" height="4" rx="1" fill="currentColor" className="opacity-40" />
-              <rect x="7" y="6" width="2" height="12" rx="1" fill="currentColor" className="opacity-75" />
-              <rect x="11" y="3" width="2" height="18" rx="1" fill="currentColor" />
-              <rect x="15" y="5" width="2" height="14" rx="1" fill="currentColor" className="opacity-90" />
-              <rect x="19" y="9" width="2" height="6" rx="1" fill="currentColor" className="opacity-50" />
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-display font-black text-sm text-white tracking-widest uppercase">EchoVoice</span>
-            <span className="text-[10px] text-brand-lightblue tracking-widest font-mono uppercase">Labs</span>
-          </div>
+        <a href="#hero" className="flex items-center">
+          <img 
+            src={echoVoiceLabsLogoSteel} 
+            alt="Echo Voice Labs Logo" 
+            className="h-10 md:h-12 w-auto object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+            referrerPolicy="no-referrer"
+          />
         </a>
         <div className="flex items-center gap-4">
           <a 
@@ -330,7 +326,6 @@ export default function App() {
                 src="claire_video.mp4"
                 poster={videoPoster}
                 playsInline
-                loop
                 muted={videoMuted}
                 onTimeUpdate={() => {
                   if (videoRef.current) {
@@ -358,7 +353,7 @@ export default function App() {
 
             {/* Dynamic AI Voice Wave Visualizer Overlay (shown overlaying Claire's image during simulated or regular play) */}
             {videoPlaying && (
-              <div className="absolute inset-0 bg-black/45 backdrop-blur-[0.5px] flex flex-col justify-end pb-24 z-10 shadow-inner pointer-events-none transition-all duration-300">
+              <div className="absolute inset-0 flex flex-col justify-end pb-24 z-10 pointer-events-none transition-all duration-300">
                 {/* Visualizer glowing pulse ripple circles */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-80 overflow-hidden">
                   <div className="w-[180px] h-[180px] rounded-full border-2 border-brand-orange/20 animate-ping absolute opacity-30" />
@@ -1694,22 +1689,17 @@ export default function App() {
       {/* FOOTER */}
       <footer id="footer" className="bg-brand-navy text-white/50 border-t border-white/5 px-6 py-12 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-center md:text-left">
         <div className="space-y-2">
-          <div className="flex items-center justify-center md:justify-start gap-2.5 text-white">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-brand-orange to-brand-lavender flex items-center justify-center shadow-sm border border-white/10">
-              {/* Matching Soundwave brand mark for EchoVoice Labs inside footer */}
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="10" width="2" height="4" rx="0.5" fill="currentColor" className="opacity-50" />
-                <rect x="8" y="6" width="2" height="12" rx="0.5" fill="currentColor" className="opacity-80" />
-                <rect x="12" y="3" width="2" height="18" rx="0.5" fill="currentColor" />
-                <rect x="16" y="5" width="2" height="14" rx="0.5" fill="currentColor" className="opacity-90" />
-                <rect x="20" y="8" width="2" height="8" rx="0.5" fill="currentColor" className="opacity-60" />
-              </svg>
-            </div>
-            <span className="font-display font-bold text-sm uppercase tracking-widest">ECHOVOICE LABS</span>
+          <div className="flex items-center justify-center md:justify-start">
+            <img 
+              src={echoVoiceLabsLogoSteel} 
+              alt="Echo Voice Labs Logo" 
+              className="h-8 md:h-10 w-auto object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+              referrerPolicy="no-referrer"
+            />
           </div>
-          <p className="font-mono text-[10px]">A Rhombus Corp Company</p>
-          <a href="mailto:support@echovoicelabs.co" className="hover:text-brand-orange tracking-wider block font-mono text-[11px]">support@echovoicelabs.co</a>
-          <span className="text-[10px] block font-mono text-brand-lightblue">medspa.echovoicelabs.com</span>
         </div>
 
         <div className="space-y-3">

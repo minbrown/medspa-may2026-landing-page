@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import auraMedspaDemo from './assets/images/aura_medspa_demo_1779310747950.png';
-import claireThumbnail from './assets/images/claire_thumbnail_1779312709109.png';
 import dermabrasionBefore from './assets/images/dermabrasion_before_1779321010455.png';
 import dermabrasionAfter from './assets/images/dermabrasion_after_1779321030371.png';
 import instagramAesthetic from './assets/images/instagram_aesthetic_1779322358897.png';
@@ -54,6 +53,7 @@ export default function App() {
   const [videoDuration, setVideoDuration] = useState(23); // 23 seconds based on user request
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoPoster, setVideoPoster] = useState("/claire_video_thumbnail.png");
 
   // Subtitle synchronization for Claire's pitch video
   const subtitles = [
@@ -314,7 +314,10 @@ export default function App() {
             
             {/* Always display Claire's thumbnail as the ultimate back canvas (even when loading or fallback is active) */}
             <img 
-              src={claireThumbnail} 
+              src={videoPoster} 
+              onError={() => {
+                setVideoPoster(instagramAesthetic);
+              }}
               alt="Claire Representative Video Presentation Poster" 
               className="absolute inset-0 w-full h-full object-cover z-0"
               referrerPolicy="no-referrer"
@@ -325,7 +328,7 @@ export default function App() {
               <video
                 ref={videoRef}
                 src="claire_video.mp4"
-                poster={claireThumbnail}
+                poster={videoPoster}
                 playsInline
                 loop
                 muted={videoMuted}

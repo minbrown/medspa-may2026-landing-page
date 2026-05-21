@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import auraMedspaDemo from './assets/images/aura_medspa_demo_1779310747950.png';
 import dermabrasionBefore from './assets/images/dermabrasion_before_1779321010455.png';
 import dermabrasionAfter from './assets/images/dermabrasion_after_1779321030371.png';
@@ -32,6 +33,25 @@ import {
   VolumeX,
   RotateCcw
 } from 'lucide-react';
+
+interface ScrollRevealProps {
+  children: React.ReactNode;
+  delay?: number;
+  duration?: number;
+}
+
+function ScrollReveal({ children, delay = 0, duration = 0.5 }: ScrollRevealProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration, delay, ease: "easeOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function App() {
   // Global & Section Specific States
@@ -259,7 +279,12 @@ export default function App() {
       {/* SECTION 1 — HERO */}
       <header id="hero" className="relative z-10 px-6 py-12 md:px-12 md:py-24 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 items-center">
         {/* Left Column (2/3 width on large) */}
-        <div className="md:col-span-2 space-y-6">
+        <motion.div 
+          className="md:col-span-2 space-y-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-orange/15 border border-brand-orange/20 text-brand-burnt text-xs font-semibold uppercase tracking-wider">
             <Sparkles size={12} className="text-brand-orange" />
             <span>Founding Member Offer — Limited to 10 Spots</span>
@@ -302,10 +327,15 @@ export default function App() {
               <Check size={16} className="text-brand-orange" /> Ready in under 10 days
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Column (1/3 width, holding the 9:16 Claire pitch video) */}
-        <div className="md:col-span-1 w-full flex justify-center">
+        <motion.div 
+          className="md:col-span-1 w-full flex justify-center"
+          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
           <div className="relative aspect-[9/16] w-full max-w-[320px] md:max-w-[350px] rounded-3xl overflow-hidden bg-brand-navy shadow-2xl border border-brand-navy/10 hover:border-brand-orange/30 transition-all duration-300 group flex flex-col justify-between">
             
             {/* Always display Claire's thumbnail as the ultimate back canvas (even when loading or fallback is active) */}
@@ -477,7 +507,7 @@ export default function App() {
             </div>
 
           </div>
-        </div>
+        </motion.div>
       </header>
 
       {/* SECTION 2 — SOCIAL PROOF / CREDIBILITY BAR */}
@@ -505,7 +535,7 @@ export default function App() {
                   demo.auramedspa.com
                 </div>
                 <a 
-                  href="https://aura.echovoicelabs.co" 
+                  href="https://medspa-g531ky5on-echovoicelabs-projects.vercel.app" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="bg-brand-orange hover:bg-brand-burnt text-white text-[10px] font-mono px-3 py-1 rounded transition-all flex items-center gap-1.5 cursor-pointer font-bold shadow-sm"
@@ -555,7 +585,7 @@ export default function App() {
                     <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                       {/* Direct Live Link Button */}
                       <a 
-                        href="https://aura.echovoicelabs.co" 
+                        href="https://medspa-g531ky5on-echovoicelabs-projects.vercel.app" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="px-5 py-2.5 bg-brand-orange hover:bg-brand-burnt text-white rounded-full font-display font-bold text-xs tracking-wider uppercase shadow-xl hover:shadow-brand-orange/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2 cursor-pointer border border-brand-orange"
@@ -595,8 +625,16 @@ export default function App() {
       </section>
 
       {/* DETAILED SANDBOX VIEW: AURA SPA LIVE EXPERIENCE */}
-      {showAuraDemo && (
-        <section id="aurademo" className="bg-[#e3e3e3] border-b border-brand-navy/10 py-16 scroll-mt-6 transition-all duration-500">
+      <AnimatePresence>
+        {showAuraDemo && (
+          <motion.section 
+            id="aurademo" 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="bg-[#e3e3e3] border-b border-brand-navy/10 py-16 scroll-mt-6 overflow-hidden"
+          >
           <div className="max-w-5xl mx-auto px-6 space-y-12">
             <div className="flex justify-between items-end border-b border-brand-navy/10 pb-6">
               <div>
@@ -763,34 +801,38 @@ export default function App() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
+    </AnimatePresence>
 
       {/* SECTION 3 — THE PROBLEM & INTERACTIVE COST CALCULATOR */}
       <section id="problem" className="relative px-6 py-16 md:px-12 bg-white border-b border-brand-navy/10">
         <div className="max-w-7xl mx-auto space-y-16">
-          <div className="text-center lg:text-left">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase">Sound Familiar?</span>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy mt-1">Your Instagram is stunning. Your website is... not.</h2>
-          </div>
+          <ScrollReveal>
+            <div className="text-center lg:text-left">
+              <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase">Sound Familiar?</span>
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy mt-1">Your Instagram is stunning. Your website is... not.</h2>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Image / Quote side (Left 5 cols) */}
             <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-8">
-              <div className="relative rounded-2xl overflow-hidden bg-brand-navy shadow-xl group border border-brand-navy/10 hover:border-brand-orange/20 transition-all duration-300 max-w-sm mx-auto lg:mx-0">
-                {/* Visual practitioner image representing stunning aesthetic */}
-                <div className="aspect-[4/3] w-full overflow-hidden relative">
-                  <img 
-                    src={instagramAesthetic} 
-                    alt="Premium clinic practitioner representing your stunning Instagram aesthetic" 
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/20 to-transparent" />
-                  <span className="absolute top-4 left-4 bg-brand-burnt/90 backdrop-blur-md text-brand-orange font-bold font-mono text-[9px] px-3 py-1 rounded-full border border-brand-orange/20 tracking-wider">
-                    INSTAGRAM AESTHETIC STANDARD
-                  </span>
-                </div>
+              <ScrollReveal delay={0.15}>
+                <div className="relative rounded-2xl overflow-hidden bg-brand-navy shadow-xl group border border-brand-navy/10 hover:border-brand-orange/20 transition-all duration-300 max-w-sm mx-auto lg:mx-0">
+                  {/* Visual practitioner image representing stunning aesthetic */}
+                  <div className="aspect-[4/3] w-full overflow-hidden relative">
+                    <img 
+                      src={instagramAesthetic} 
+                      alt="Premium clinic practitioner representing your stunning Instagram aesthetic" 
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/20 to-transparent" />
+                    <span className="absolute top-4 left-4 bg-brand-burnt/90 backdrop-blur-md text-brand-orange font-bold font-mono text-[9px] px-3 py-1 rounded-full border border-brand-orange/20 tracking-wider">
+                      INSTAGRAM AESTHETIC STANDARD
+                    </span>
+                  </div>
                 
                 {/* Quote part */}
                 <div className="p-6 text-white space-y-3">
@@ -802,10 +844,12 @@ export default function App() {
                   </cite>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
+          </div>
 
-            {/* Inclusions / Loss bullets + body (Right 7 cols) */}
-            <div className="lg:col-span-7 space-y-8">
+          {/* Inclusions / Loss bullets + body (Right 7 cols) */}
+          <div className="lg:col-span-7 space-y-8">
+            <ScrollReveal delay={0.2}>
               <div className="space-y-4 text-base text-brand-navy/70 leading-relaxed">
                 <p>
                   Most med spa and beauty studio owners we talk to have the same story. They built their website years ago on Squarespace or Wix, meant to update it, and never did. Meanwhile their Instagram looks incredible — and their website sends potential clients running.
@@ -850,19 +894,22 @@ export default function App() {
               <div className="bg-brand-lavender/5 p-5 rounded-2xl border border-brand-lavender/15 font-light text-brand-navy/80">
                 You don't need a new booking system. You don't need a new brand. You just need a website that finally matches the quality of what you do.
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* DETAILED DUPLICATION ELEMENT: THE WEBSITE COST CALCULATOR */}
       <section id="math" className="px-6 py-16 md:px-12 bg-brand-lightgray/40 border-b border-brand-navy/10">
         <div className="max-w-7xl mx-auto space-y-8">
-          <div className="text-center">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase">The Math</span>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy mt-1">How much is your outdated website costing you?</h2>
-            <p className="text-sm text-brand-navy/60 mt-2 max-w-xl mx-auto">Input your real studio averages below to see what you are currently bleeding in potential beauty bookings.</p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center">
+              <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase">The Math</span>
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy mt-1">How much is your outdated website costing you?</h2>
+              <p className="text-sm text-brand-navy/60 mt-2 max-w-xl mx-auto">Input your real studio averages below to see what you are currently bleeding in potential beauty bookings.</p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mt-12">
             {/* Input Sliders side */}
@@ -1011,15 +1058,17 @@ export default function App() {
       {/* SECTION 4 — THE SOLUTION */}
       <section id="solution" className="px-6 py-16 md:px-12 bg-white border-b border-brand-navy/10 relative z-10">
         <div className="max-w-7xl mx-auto space-y-12">
-          <div className="max-w-3xl space-y-3">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-lavender uppercase block">What We Do</span>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy">
-              A Complete 5-Page Website Redesign. Built in About a Week.
-            </h2>
-            <p className="text-base text-brand-navy/70 font-light">
-              We take your existing brand — your logo, your photos, your colors — and rebuild your website from the ground up on a professional platform. Mobile-optimized, fast-loading, and designed to convert visitors into booked appointments.
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="max-w-3xl space-y-3">
+              <span className="text-xs font-mono font-bold tracking-widest text-brand-lavender uppercase block">What We Do</span>
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy">
+                A Complete 5-Page Website Redesign. Built in About a Week.
+              </h2>
+              <p className="text-base text-brand-navy/70 font-light">
+                We take your existing brand — your logo, your photos, your colors — and rebuild your website from the ground up on a professional platform. Mobile-optimized, fast-loading, and designed to convert visitors into booked appointments.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Page 1 */}
@@ -1080,7 +1129,7 @@ export default function App() {
                 <ul className="text-xs space-y-2 text-white/80">
                   <li className="flex items-center gap-2"><Check size={12} className="text-brand-orange" /> Mobile-responsive fluidity</li>
                   <li className="flex items-center gap-2"><Check size={12} className="text-brand-orange" /> Google Business Profile redirection setup</li>
-                  <li className="flex items-center gap-2"><Check size={12} className="text-brand-orange" /> Social link config (Instagram / Linktree update)</li>
+                  <li className="flex items-center gap-2"><Check size={12} className="text-brand-orange" /> Social link config (Facebook / Instagram update)</li>
                   <li className="flex items-center gap-2"><Check size={12} className="text-brand-orange" /> Up to 2 rounds of revisions</li>
                 </ul>
               </div>
@@ -1397,11 +1446,13 @@ export default function App() {
       {/* SECTION 7 — HOW IT WORKS */}
       <section id="process" className="px-6 py-16 md:px-12 bg-brand-lightgray/40 border-b border-brand-navy/10">
         <div className="max-w-7xl mx-auto space-y-12">
-          <div className="text-center">
-            <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase block">The Process</span>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy mt-1">From Payment to Live Site in About a Week</h2>
-            <p className="text-sm text-brand-navy/60 mt-2">Zero technical bottlenecks. We assume all engineering responsibilities.</p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center">
+              <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase block">The Process</span>
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-brand-navy mt-1">From Payment to Live Site in About a Week</h2>
+              <p className="text-sm text-brand-navy/60 mt-2">Zero technical bottlenecks. We assume all engineering responsibilities.</p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mt-12 items-stretch">
             {/* Step 1 */}
@@ -1454,7 +1505,7 @@ export default function App() {
                 <span className="text-[10px] font-mono text-brand-lavender hover:text-brand-burnt font-black block">05 / DEPLOY</span>
                 <h4 className="font-display font-bold text-sm text-brand-navy leading-snug">05. You Go Live</h4>
                 <p className="text-xs text-brand-navy/60 leading-relaxed font-light">
-                  Approval, DNS switch configuration, live domains, Google maps and social updates initiated.
+                  Approval, DNS switch configuration, live domains, Google maps, and Facebook/Instagram updates initiated.
                 </p>
               </div>
               <div className="w-8 h-8 bg-brand-burnt text-white flex items-center justify-center rounded-full font-bold text-xs mt-4">✓</div>
@@ -1629,7 +1680,7 @@ export default function App() {
             <span className="text-xs font-mono font-bold tracking-widest text-brand-burnt uppercase block">While We're At It</span>
             <h3 className="font-display font-black text-2xl text-brand-navy">Add a Month of Social Content for $97</h3>
             <p className="text-xs md:text-sm text-brand-navy/70 leading-relaxed font-light">
-              We'll design 12-15 branded static social media posts — ready to publish on Instagram, Facebook, and Google Business Profile. Consistent, on-brand, and done for you.
+              We'll design 12-15 branded static social media posts — ready to publish on Instagram and Facebook. Consistent, on-brand, and done for you.
             </p>
             <div className="text-xs space-y-1 block font-mono text-brand-lavender font-bold">
               <div>• $97 one-time payment</div>
@@ -1706,7 +1757,6 @@ export default function App() {
           <div className="flex justify-center md:justify-end gap-x-4 gap-y-2 text-xs">
             <span className="hover:text-brand-orange cursor-pointer tracking-wider">Instagram</span>
             <span className="hover:text-brand-orange cursor-pointer tracking-wider">Facebook</span>
-            <span className="hover:text-brand-orange cursor-pointer tracking-wider">Google Profile</span>
           </div>
           <p className="text-[10px] text-white/30">
             © 2026 Echo Voice Labs. All rights reserved.

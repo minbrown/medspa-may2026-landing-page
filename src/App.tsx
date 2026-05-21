@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import auraMedspaDemo from './assets/images/aura_medspa_demo_1779310747950.png';
 import claireThumbnail from './assets/images/claire_thumbnail_1779312709109.png';
+import dermabrasionBefore from './assets/images/dermabrasion_before_1779321010455.png';
+import dermabrasionAfter from './assets/images/dermabrasion_after_1779321030371.png';
+import instagramAesthetic from './assets/images/instagram_aesthetic_1779322358897.png';
 import { 
   Sparkles, 
   Check, 
@@ -652,46 +655,66 @@ export default function App() {
                 {/* Demo Section 2: Before & After comparison slider */}
                 <div className="bg-white p-6 rounded-2xl border border-brand-navy/5 shadow-md space-y-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-display font-bold text-md text-brand-navy">Results Comparison Slider</h3>
-                    <span className="text-xs font-mono text-brand-lavender font-bold">Interactive Tool</span>
+                    <h3 className="font-display font-bold text-md text-brand-navy">Clinical Results Comparison</h3>
+                    <span className="text-xs font-mono text-brand-lavender font-bold">Interactive Slider</span>
                   </div>
-                  <p className="text-xs text-brand-navy/60">Drag the control below to slide between Before and 14 days After a botox and cheek dermal lift treatment.</p>
+                  <p className="text-xs text-brand-navy/60">Drag the slider below to contrast real Patient Results before and 14 days after a Clinical Dermabrasion skin resurfacing treatment.</p>
                   
-                  {/* Interactive Slider box */}
-                  <div className="relative aspect-[3/2] w-full rounded-xl overflow-hidden bg-brand-navy/5 select-none">
-                    {/* Simulated "Before" Background */}
-                    <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center bg-[#efefef]">
-                      <div className="w-16 h-16 rounded-full border-2 border-brand-navy/30 flex items-center justify-center text-brand-navy/40 font-mono text-xs font-bold mb-3">BEFORE</div>
-                      <span className="font-display italic text-brand-navy/50 text-sm">Fine lines visible on forehead & crows feet regions</span>
-                    </div>
+                  {/* Interactive Slider box with real images */}
+                  <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-brand-navy/5 select-none shadow-md">
+                    {/* Before Image (Background) */}
+                    <img 
+                      src={dermabrasionBefore} 
+                      alt="Skin profile before Clinical Dermabrasion treatment" 
+                      className="absolute inset-0 w-full h-full object-cover z-0"
+                      referrerPolicy="no-referrer"
+                    />
 
-                    {/* Simulated "After" slider overlay */}
+                    {/* After Image with sliding clipPath */}
+                    <img 
+                      src={dermabrasionAfter} 
+                      alt="Skin profile after Clinical Dermabrasion treatment" 
+                      className="absolute inset-0 w-full h-full object-cover z-10"
+                      referrerPolicy="no-referrer"
+                      style={{
+                        clipPath: `polygon(0 0, ${auraBeforeAfter}% 0, ${auraBeforeAfter}% 100%, 0 100%)`
+                      }}
+                    />
+
+                    {/* Dynamic Separator Line with custom drag indicator handle bubble */}
                     <div 
-                      className="absolute inset-y-0 left-0 overflow-hidden bg-[#e3e3e3] flex flex-col justify-center items-center border-r-[3px] border-brand-orange"
-                      style={{ width: `${auraBeforeAfter}%` }}
+                      className="absolute inset-y-0 w-[3px] bg-brand-orange z-20 pointer-events-none drop-shadow-[0_0_4px_rgba(242,100,25,0.7)]"
+                      style={{ left: `${auraBeforeAfter}%` }}
                     >
-                      <div className="absolute inset-0 w-full h-full flex flex-col justify-center items-center p-6 text-center bg-[#efefef] min-w-[320px]">
-                        <div className="w-16 h-16 rounded-full border-2 border-brand-orange/40 flex items-center justify-center text-brand-burnt font-mono text-xs font-bold mb-3">AFTER</div>
-                        <span className="font-display italic text-brand-burnt text-sm">Balanced smooth texture & healthy volume</span>
+                      <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border border-brand-orange shadow-lg flex items-center justify-center">
+                        <div className="flex gap-0.5 items-center justify-center">
+                          <ChevronLeft size={11} className="text-brand-orange -mr-1" />
+                          <ChevronRight size={11} className="text-brand-orange -ml-1" />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Left/Right labels */}
-                    <span className="absolute bottom-3 left-3 bg-brand-navy/80 text-white text-[10px] px-2 py-1 rounded font-mono uppercase tracking-widest z-10">Before Treatment</span>
-                    <span className="absolute bottom-3 right-3 bg-brand-orange/90 text-white text-[10px] px-2 py-1 rounded font-mono uppercase tracking-widest z-10">14 Days After</span>
+                    {/* Left/Right floating badges */}
+                    <span className="absolute top-3 left-3 bg-black/60 text-white text-[9px] px-2.5 py-1 rounded-md font-mono uppercase tracking-widest z-20 backdrop-blur-sm border border-white/10 select-none">
+                      Before
+                    </span>
+                    <span className="absolute top-3 right-3 bg-brand-navy/85 text-white text-[9px] px-2.5 py-1 rounded-md font-mono uppercase tracking-widest z-20 backdrop-blur-sm border border-white/10 select-none">
+                      Dynamic After
+                    </span>
                   </div>
 
                   {/* Range Slider handle */}
                   <input 
                     type="range" 
-                    min="10" 
-                    max="90" 
+                    min="5" 
+                    max="95" 
                     value={auraBeforeAfter} 
                     onChange={(e) => setAuraBeforeAfter(parseInt(e.target.value))}
-                    className="w-full h-2 bg-brand-lightgray rounded-lg appearance-none cursor-pointer accent-brand-orange" 
+                    className="w-full h-2 bg-brand-lightgray rounded-lg appearance-none cursor-pointer accent-brand-orange focus:outline-none" 
                   />
-                  <div className="text-center">
-                    <span className="text-xs text-brand-navy/40 font-mono">← Drag to verify treatment outcome perfection →</span>
+                  <div className="flex justify-between text-[11px] text-brand-navy/55 px-1 font-mono">
+                    <span>← Before Treatment</span>
+                    <span>After 14 Days →</span>
                   </div>
                 </div>
               </div>
@@ -756,24 +779,27 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Image / Quote side (Left 5 cols) */}
             <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-8">
-              <div className="relative rounded-2xl overflow-hidden bg-brand-navy text-white p-6 shadow-xl aspect-[4/5] flex flex-col justify-between max-w-sm mx-auto lg:mx-0">
-                <div className="absolute inset-0 bg-radial-[circle_at_left_bottom] from-brand-orange/15 via-transparent to-transparent pointer-events-none" />
-                <span className="bg-brand-burnt/30 text-brand-orange font-bold font-mono text-[10px] px-3 py-1 rounded-full border border-brand-orange/20 self-start tracking-wider">PREMIUM PARTNER</span>
-                
-                {/* Simulated high-end aesthetic line graphic representing clear skincare */}
-                <div className="py-8 text-center flex items-center justify-center">
-                  <svg viewBox="0 0 100 100" fill="none" className="w-36 h-36 text-brand-orange opacity-40">
-                    <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="1" />
-                    <circle cx="50" cy="50" r="20" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-                    <line x1="15" y1="50" x2="85" y2="50" stroke="currentColor" strokeWidth="1" />
-                  </svg>
+              <div className="relative rounded-2xl overflow-hidden bg-brand-navy shadow-xl group border border-brand-navy/10 hover:border-brand-orange/20 transition-all duration-300 max-w-sm mx-auto lg:mx-0">
+                {/* Visual practitioner image representing stunning aesthetic */}
+                <div className="aspect-[4/3] w-full overflow-hidden relative">
+                  <img 
+                    src={instagramAesthetic} 
+                    alt="Premium clinic practitioner representing your stunning Instagram aesthetic" 
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/20 to-transparent" />
+                  <span className="absolute top-4 left-4 bg-brand-burnt/90 backdrop-blur-md text-brand-orange font-bold font-mono text-[9px] px-3 py-1 rounded-full border border-brand-orange/20 tracking-wider">
+                    INSTAGRAM AESTHETIC STANDARD
+                  </span>
                 </div>
-
-                <div className="space-y-2">
-                  <blockquote className="font-display text-lg italic text-white/90 leading-relaxed font-light">
+                
+                {/* Quote part */}
+                <div className="p-6 text-white space-y-3">
+                  <blockquote className="font-display text-sm italic text-white/90 leading-relaxed font-light">
                     "I can't stop treating clients to answer the phone or update the website. So I just don't. And I know I'm losing bookings every day."
                   </blockquote>
-                  <cite className="block text-xs font-mono text-brand-orange uppercase tracking-widest font-semibold not-italic">
+                  <cite className="block text-[10px] font-mono text-brand-orange uppercase tracking-widest font-semibold not-italic">
                     — Every beauty clinic owner, ever
                   </cite>
                 </div>
